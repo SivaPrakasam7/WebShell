@@ -1,4 +1,4 @@
-# Whack
+# WebShell
 
 Web Page Hacking Techinquies
 
