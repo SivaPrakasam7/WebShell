@@ -6,4 +6,5 @@ export const BrowserCmds: { [key: string]: string } = {
   cookie: "document.cookie",
   localStorage: "document.localStorage",
   sessionStorage: "document.sessionStorage",
+  resource: "performance.getEntriesByType('resource')",
 };

@@ -46,6 +46,7 @@
                     e.preventDefault();
                     return false;
                 case 13:
+                    document.body.innerHTML += `<p>${e.target.value}</p>`
                     fetch(`/cmd/${e.target.value.trim().split('\n').at(-1).replace(Shell, '')}`).then((res) => res.json()).then((data) => {
                         console.log(data.message);
                         Terminal.value += Shell
