@@ -16,18 +16,9 @@ App.use(cors());
 App.use(Express.json({ limit: "50mb" }));
 App.set("view engine", "ejs");
 
-App.get("/", (_req, res) =>
-  res.render("index", {
-    url: (global as any).URL,
-  })
-);
-
 App.use(Routes.router);
 
 const Server = App.listen(port, () => console.log(`Server listen at ${port}`));
-
-// WS Socket
-Socket.Shell(Server);
 
 setTimeout(
   () =>
@@ -35,7 +26,17 @@ setTimeout(
       method: "get",
       url: "http://127.0.0.1:4040/api/tunnels/command_line",
     }).then((r) => {
-      (global as any).URL = r.data.public_url.replace("https://", "");
+      const URL = r.data.public_url.replace("https://", "");
+      App.get("/", (_req, res) =>
+        res.render("index", {
+          url: URL,
+        })
+      );
+
+      console.log(URL);
+
+      // WS Socket
+      Socket.Shell(Server, URL);
     }),
   9000
 );

@@ -3,7 +3,7 @@ import * as Read from "readline";
 import * as Http from "http";
 import * as Services from "@src/services";
 
-export const Shell = (Server: Http.Server) => {
+export const Shell = (Server: Http.Server, URL: string) => {
   const wss = new WS.Server({ server: Server, path: "/shell" });
   const io = require("socket.io")(Server);
   (global as any).io = io;
@@ -15,8 +15,10 @@ export const Shell = (Server: Http.Server) => {
       output: process.stdout,
     });
 
-    ReadLine.on("line", Services.Executor);
+    ReadLine.on("line", (line: string) => Services.Executor(line, URL));
   });
 
-  io.on("connection", (client: any) => client.on("cmd", Services.Executor));
+  io.on("connection", (client: any) =>
+    client.on("cmd", (line: string) => Services.Executor(line, URL))
+  );
 };
